@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title> GoTrend </title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+  </head>
+
+  <body>
+    <main>
+      <header class="header">
+        <div class="header__title">
+          <h3> GoTrend </h3>
+        </div>
+      </header>
+      <nav class="navbar">
+          <button class="navtab" onclick="afficherTrending()">Trending Videos</button>
+          <button class="navtab" onclick="afficherLikes()">Videos you liked</button>
+      </nav>
+      <section class="container trending" id="trending">
+        <h3>trending</h3>
+        <ul>
+          {{range .Items}} 
+          <li class="news-article">
+            <div>
+              <a target="_blank" rel="noreferrer noopener" href="https://www.youtube.com/watch?v={{.Id}}">
+                <h3 class="title">{{ .Snippet.Localized.Title }}</h3>
+              </a>
+              <a target="_blank" rel="noreferrer noopener" href="https://www.youtube.com/channel/{{.Snippet.ChannelId}}">
+              <p class="description">{{ .Snippet.ChannelTitle }}</p>
+              </a>
+              <div class="metadata">
+                <p class="description">
+                  {{ printf "%.150s" .Snippet.Description }} </br >... 
+                </p>
+                <div class="date">
+                <time class="published-date">{{ .Snippet.PublishedAt }}</time>
+                </div>
+              </div>
+            </div>
+            <div class="right">
+            <a target="_blank" rel="noreferrer noopener" href="https://www.youtube.com/watch?v={{.Id}}">
+            <img class="article-image" src="{{ .Snippet.Thumbnails.Default.Url }}" />
+            </a>
+            <button class="likebtn" data-id="{{.Id}}" onclick="liked(this)">Like</button>
+          </div>
+          </li>
+          {{ end }}
+        </ul>
+      </section>
+      <section class="container hidden" id="likes">
+        <h3>likes</h3>
+      <ul>
+        {{range .Items}}
+        <li class="news-article">
+          <div>
+            <a target="_blank" rel="noreferrer noopener" href="https://www.youtube.com/watch?v={{.Id}}">
+              <h3 class="title">{{ .Snippet.Localized.Title }}</h3>
+            </a>
+            <a target="_blank" rel="noreferrer noopener" href="https://www.youtube.com/channel/{{.Snippet.ChannelId}}">
+              <p class="description">{{ .Snippet.ChannelTitle }}</p>
+            </a>
+            <div class="metadata">
+              <p class="description">
+                {{ printf "%.150s" .Snippet.Description }} </br>...
+              </p>
+              <div class="date">
+                <time class="published-date">{{ .Snippet.PublishedAt }}</time>
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <a target="_blank" rel="noreferrer noopener" href="https://www.youtube.com/watch?v={{.Id}}">
+              <img class="article-image" src="{{ .Snippet.Thumbnails.Default.Url }}" />
+            </a>
+            <button class="likebtn" data-id="{{.Id}}" onclick="liked(this)">Like</button>
+          </div>
+        </li>
+        {{ end }}
+      </ul>
+      </section>
+    </main>
+  </body>
+</html>
+
+
+<script>
+  function liked(el){
+    var xhr = new XMLHttpRequest();
+
+    if (el.classList.contains('liked')){
+      xhr.open("POST", '/unlike', true);  
+      xhr.send(el.dataset.id);
+      el.classList.remove('liked');
+    } else { 
+      xhr.open("POST", '/like', true);  
+      xhr.send(el.dataset.id);
+      el.classList.add('liked');
+    }
+  }
+  function afficherLikes(){
+    document.getElementById('trending').className = 'hidden';
+    document.getElementById('likes').className = 'container likes';
+  } 
+  function afficherTrending() {
+      document.getElementById('likes').className = 'hidden';
+    document.getElementById('trending').className = 'container trending';
+  }
+</script>
