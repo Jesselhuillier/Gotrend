@@ -324,6 +324,14 @@ func insertlike(userID string, videoID string) {
 // 	fmt.Println(video)
 // }
 
+func fetchlikes() {
+	video := new(Video)
+	err := db.Model(video).
+		ColumnExpr("video.*").
+		ColumnExpr(" v.ID AS Video__id, v.Title AS Video__title, v.Channelid AS Video__channelid, v.Channeltitle AS Video__channeltitle, v.Description AS Video__description, v.Publishedat AS Video__publishedat, v.Thumbnailurl AS Video__thumbnailurl").
+		Join("JOIN likes AS l ON l.id =_id")
+}
+
 func video(resp *youtube.Video) *Video {
 	video := new(Video)
 	video.ID = resp.Id
